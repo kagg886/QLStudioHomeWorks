@@ -10,22 +10,25 @@ import (
 
 func borrow() {
 	name := ""
-	value := 0
+	value := ""
 	fmt.Println("输入借款对象")
 	fmt.Scanf("%s", &name)
 	fmt.Println("输入借款数目(单位为元)")
-	fmt.Scanf("%d", &value)
-	filename := "./csv/" + name + ".csv"
+	fmt.Scanf("%s", &value)
+	filename := "/home/kagg886/VSProject/GoStudy/csv/" + name + ".csv"
 
-	f, err := os.Create(filename)
+	f, err := os.OpenFile(filename, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0666)
+	f.Chdir()
 	if err != nil {
+		fmt.Println(err)
 		return
 	}
-	f.WriteString("xEFxBBxBF")
+	// f.Write([]byte{0xEF, 0xBB, 0xBF})
 	w := csv.NewWriter(f)
 	data := [][]string{
-		{"借款", string(rune(value))},
+		{"借款", value},
 	}
+
 	w.WriteAll(data)
 	w.Flush()
 	fmt.Println("Success!")
@@ -33,22 +36,22 @@ func borrow() {
 
 func payBack() {
 	name := ""
-	value := 0
+	value := ""
 	fmt.Println("输入还款对象")
 	fmt.Scanf("%s", &name)
 	fmt.Println("输入还款数目(单位为元)")
-	fmt.Scanf("%d", &value)
-	filename := "./csv/" + name + ".csv"
+	fmt.Scanf("%s", &value)
+	filename := "/home/kagg886/VSProject/GoStudy/csv/" + name + ".csv"
 
-	f, err := ioutil.ReadFile(filename) //借了款才能还款
+	f, err := os.OpenFile(filename, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0666) //借了款才能还款
 	if err != nil {
 		fmt.Println("都没借款怎么还款 emm")
 		return
 	}
-	f.WriteString("xEFxBBxBF")
+	//f.WriteString("xEFxBBxBF")
 	w := csv.NewWriter(f)
 	data := [][]string{
-		{"还款", string(rune(value))},
+		{"还款", value},
 	}
 	w.WriteAll(data)
 	w.Flush()
@@ -83,6 +86,7 @@ func main() {
 		fmt.Println("输入1借款")
 		fmt.Println("输入2还款")
 		fmt.Println("输入3查债")
+		fmt.Println("输入4退出")
 		fmt.Scanln(&i)
 		if i == 1 {
 			borrow()
@@ -92,6 +96,9 @@ func main() {
 		}
 		if i == 3 {
 			query()
+		}
+		if i == 4 {
+			break
 		}
 	}
 }
